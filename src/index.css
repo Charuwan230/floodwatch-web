@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap');
+
+:root {
+  --bg:           #0A0F1E;
+  --panel:        #0D1526;
+  --border:       #1A2540;
+  --accent:       #00D4FF;
+  --accent-dark:  #0066FF;
+  --safe:         #22C55E;
+  --risk:         #F97316;
+  --flood:        #EF4444;
+  --text-primary:   #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted:     #4A5568;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Sarabun', sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3 { font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
