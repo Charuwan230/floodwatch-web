@@ -9,8 +9,3 @@ export default defineConfig({
     }
   }
 })
-```
-
-สร้างไฟล์ `floodwatch-web/.env.production`:
-```
-VITE_API_URL=https://floodwatch-backend-production.up.railway.app
