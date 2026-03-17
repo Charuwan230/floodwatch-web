@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "npx serve@14 dist --listen $PORT"
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "start": "npx serve@14 dist -l tcp://0.0.0.0:$PORT"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
