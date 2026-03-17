@@ -1,26 +1,17 @@
-import http from "http";
-import fs from "fs";
-import path from "path";
+const express = require("express");
+const path = require("path");
 
-const port = process.env.PORT || 3000;
-const base = "./dist";
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const server = http.createServer((req, res) => {
-  let filePath = path.join(base, req.url === "/" ? "index.html" : req.url);
+// serve static
+app.use(express.static(path.join(__dirname, "dist")));
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      fs.readFile(path.join(base, "index.html"), (err2, data2) => {
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(data2);
-      });
-    } else {
-      res.writeHead(200);
-      res.end(data);
-    }
-  });
+// fix SPA (สำคัญมาก)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
