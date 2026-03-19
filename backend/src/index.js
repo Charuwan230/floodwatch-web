@@ -16,14 +16,16 @@ const { sendPendingAlerts }        = require('./services/notificationService');
 
 const app = express();
 
-app.use(helmet());
 app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:5174',
     'https://floodwatch-web-production-ffc8.up.railway.app',
     'https://floodwatch-web-production.up.railway.app',
+    'https://floodwatch-web-lac.vercel.app',
+    'https://floodwatch-web-git-main-charuwan230s-projects.vercel.app',
   ],
+ 
   credentials: true,
 }));
 app.use(express.json());
