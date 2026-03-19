@@ -4,6 +4,49 @@ import DashboardPage from './pages/DashboardPage'
 import ProfilePage   from './pages/ProfilePage'
 import './index.css'
 
+function isInAppBrowser() {
+  const ua = navigator.userAgent || ''
+  return /Line|FBAN|FBAV|Instagram|Twitter|MicroMessenger/i.test(ua)
+}
+
+function OpenInBrowser() {
+  const url = window.location.href
+  return (
+    <div style={{
+      minHeight: '100vh', background: 'var(--bg)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24,
+    }}>
+      <div style={{
+        background: 'var(--panel)', border: '1px solid var(--border)',
+        borderRadius: 20, padding: 32, maxWidth: 360, textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 56, marginBottom: 16 }}>🌊</div>
+        <h2 style={{ fontFamily: 'Rajdhani', color: 'var(--accent)',
+          fontSize: 24, marginBottom: 12 }}>FLOOD WATCH</h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14,
+          marginBottom: 24, lineHeight: 1.6 }}>
+          กรุณาเปิดลิงก์นี้ในเบราว์เซอร์ภายนอก<br/>
+          (Chrome, Safari หรือ Edge)
+        </p>
+        <div style={{
+          background: 'rgba(0,212,255,0.1)',
+          border: '1px solid rgba(0,212,255,0.3)',
+          borderRadius: 10, padding: '12px 16px', marginBottom: 20,
+        }}>
+          <p style={{ color: 'var(--accent)', fontSize: 12,
+            wordBreak: 'break-all' }}>{url}</p>
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: 12, lineHeight: 1.6 }}>
+          วิธีเปิด: กดปุ่ม <b style={{color:'var(--text-secondary)'}}>...</b> หรือ
+          <b style={{color:'var(--text-secondary)'}}> เมนู</b> แล้วเลือก
+          <b style={{color:'var(--accent)'}}> เปิดในเบราว์เซอร์</b>
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function Navbar() {
   const linkStyle = ({ isActive }) => ({
     textDecoration: 'none',
@@ -48,6 +91,10 @@ function Navbar() {
 }
 
 export default function App() {
+  if (isInAppBrowser()) {
+    return <OpenInBrowser />
+  }
+
   return (
     <BrowserRouter>
       <Navbar />
