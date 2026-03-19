@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import HomePage      from './pages/HomePage'
 import DashboardPage from './pages/DashboardPage'
@@ -35,16 +34,13 @@ function Navbar() {
           fontWeight:700, fontSize:18, letterSpacing:1 }}>FLOOD WATCH</span>
         <span style={{ color:'var(--text-muted)', fontSize:12 }}>จังหวัดชลบุรี</span>
       </div>
-
       <div style={{ display:'flex', gap:28 }}>
         <NavLink to="/"          style={linkStyle}>แผนที่</NavLink>
         <NavLink to="/dashboard" style={linkStyle}>สถิติ</NavLink>
         <NavLink to="/profile"   style={linkStyle}>ตั้งค่า</NavLink>
       </div>
-
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-        <div style={{ width:8, height:8, borderRadius:4,
-          background:'var(--safe)' }} />
+        <div style={{ width:8, height:8, borderRadius:4, background:'var(--safe)' }} />
         <span style={{ fontSize:12, color:'var(--safe)' }}>LIVE</span>
       </div>
     </nav>

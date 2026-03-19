@@ -172,3 +172,72 @@ export default function ProfilePage() {
               สแกนเพื่อเพิ่มเพื่อน
             </div>
           </div>
+          <div style={{ fontSize:12, color:'var(--text-secondary)', lineHeight:2 }}>
+            <div style={{ color:'var(--accent)', fontWeight:700,
+              marginBottom:6, fontSize:13 }}>วิธีใช้งาน</div>
+            <div>1. สแกน QR Code ด้านซ้าย</div>
+            <div>2. กด เพิ่มเพื่อน ใน Line</div>
+            <div>3. Bot จะส่ง User ID มาให้ทันที</div>
+            <div>4. คัดลอก ID วางในช่องด้านล่าง</div>
+            <div>5. กด บันทึก</div>
+          </div>
+        </div>
+        <input value={lineUserId} onChange={e=>setLineUserId(e.target.value)}
+          placeholder="Line User ID (Bot จะส่งมาให้อัตโนมัติ)"
+          style={inputStyle}/>
+      </Card>
+
+      <Card title="การแจ้งเตือน">
+        <Toggle value={notifyFlood} onChange={setNotifyFlood}
+          label="น้ำท่วมวิกฤต" desc="แจ้งด่วนเมื่อน้ำท่วมรุนแรง"/>
+        <hr style={{ border:'none', borderTop:'1px solid var(--border)' }}/>
+        <Toggle value={notifyRisk} onChange={setNotifyRisk}
+          label="เฝ้าระวัง" desc="แจ้งเมื่อมีความเสี่ยงน้ำท่วม"/>
+        <hr style={{ border:'none', borderTop:'1px solid var(--border)' }}/>
+        <Toggle value={notifySafe} onChange={setNotifySafe}
+          label="สถานะปกติ" desc="แจ้งเมื่อพื้นที่กลับมาปกติ"/>
+      </Card>
+
+      <button onClick={save} disabled={saving} style={{
+        width:'100%', padding:14, borderRadius:12, border:'none',
+        background:'var(--accent)', color:'var(--bg)',
+        fontSize:15, fontWeight:700, cursor:'pointer',
+        marginBottom:16, fontFamily:'Sarabun',
+        opacity: saving ? 0.7 : 1,
+      }}>
+        {saving ? 'กำลังบันทึก...' : 'บันทึกการตั้งค่า'}
+      </button>
+
+      <Card title="ทดสอบแจ้งเตือนผ่าน Line Bot">
+        <p style={{ color:'var(--text-muted)', fontSize:12, marginBottom:12 }}>
+          จำลองสถานการณ์น้ำท่วมและส่งแจ้งเตือนไป Line ทันที
+        </p>
+        <select value={testDistrict} onChange={e=>setTestDistrict(e.target.value)}
+          style={{ ...inputStyle, cursor:'pointer', marginBottom:10 }}>
+          <option value="">เลือกอำเภอที่จะจำลอง</option>
+          {DISTRICTS.map(d => (
+            <option key={d.id} value={d.id}>{d.name}</option>
+          ))}
+        </select>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+          {[
+            ['เฝ้าระวัง', '#F97316', 'risk'],
+            ['น้ำท่วม',   '#EF4444', 'flood'],
+            ['ปกติ',      '#22C55E', 'safe'],
+          ].map(([label, color, status]) => (
+            <button key={status} onClick={() => handleTest(status)}
+              disabled={testing}
+              style={{
+                padding:'10px 0', borderRadius:10, cursor:'pointer',
+                border:`1px solid ${color}60`, background:`${color}20`,
+                color, fontSize:13, fontWeight:700, fontFamily:'Sarabun',
+                opacity: testing ? 0.6 : 1,
+              }}>
+              {testing ? '...' : label}
+            </button>
+          ))}
+        </div>
+      </Card>
+    </div>
+  )
+}
