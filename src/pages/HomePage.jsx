@@ -137,14 +137,21 @@ export default function HomePage() {
                   fillOpacity={0.75} weight={2}
                   eventHandlers={{ click:()=>setSelected(d) }}>
                   <Popup>
-                    <div style={{ fontFamily:'Sarabun', minWidth:160, fontSize:15 }}>
-                      <b style={{ fontSize:16 }}>{d.districtName}</b><br/>
-                      <span style={{ color }}>{LABEL[d.status]}</span><br/>
-                      น้ำ {d.waterLevel?.toFixed(0)} ซม.<br/>
-                      ฝน {d.rainfall?.toFixed(1)} มม.<br/>
-                      {d.temperature?.toFixed(0)}°C
+                  <div style={{ fontFamily:'Sarabun', minWidth:180, fontSize:14, lineHeight:1.8 }}>
+                    <div style={{ fontWeight:700, fontSize:16, marginBottom:6,
+                      borderBottom:'1px solid #eee', paddingBottom:6 }}>
+                      📍 {d.districtName}
                     </div>
-                  </Popup>
+                    <div style={{ color, fontWeight:600, marginBottom:6 }}>
+                      {d.status === 'flood' ? '🚨' : d.status === 'risk' ? '⚠️' : '✅'} {LABEL[d.status]}
+                    </div>
+                    <div>💧 ระดับน้ำ: <b>{d.waterLevel?.toFixed(0)} ซม.</b></div>
+                    <div>🌧 ปริมาณฝน: <b>{d.rainfall?.toFixed(1)} มม.</b></div>
+                    <div>🌡 อุณหภูมิ: <b>{d.temperature?.toFixed(0)}°C</b></div>
+                    <div>💨 ลม: <b>{d.windSpeed?.toFixed(1)} กม./ชม.</b></div>
+                    <div>💦 ความชื้น: <b>{d.humidity?.toFixed(0)}%</b></div>
+                  </div>
+                </Popup>
                 </CircleMarker>
               )
             })}
