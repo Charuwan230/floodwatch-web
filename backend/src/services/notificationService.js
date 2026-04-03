@@ -92,7 +92,7 @@ async function sendLineMessage(lineUserId, districtName, status, waterLevel) {
                 action: {
                   type: 'uri',
                   label: 'ดูแผนที่น้ำท่วม',
-                  uri: process.env.FRONTEND_URL || 'http://localhost:5173',
+                  uri: process.env.FRONTEND_URL || 'https://floodwatch-web-lac.vercel.app/',
                 },
                 style: 'primary',
                 color: '#00D4FF',

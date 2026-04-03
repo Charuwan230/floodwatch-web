@@ -1,61 +1,94 @@
 // backend/src/index.js
 require('dotenv').config();
-const express   = require('express');
-const cors      = require('cors');
-const helmet    = require('helmet');
-const mongoose  = require('mongoose');
-const cron      = require('node-cron');
 
-const authRoutes  = require('./routes/auth');
-const floodRoutes = require('./routes/flood');
-const userRoutes  = require('./routes/user');
-const alertRoutes = require('./routes/alert');
+const express  = require('express');
+const cors     = require('cors');
+const mongoose = require('mongoose');
+const fetch    = require('node-fetch');
 
-const { fetchAndUpdateFloodData } = require('./services/floodFetcher');
-const { sendPendingAlerts }        = require('./services/notificationService');
+const User = require('./models/User');
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'https://floodwatch-web-production-ffc8.up.railway.app',
-    'https://floodwatch-web-production.up.railway.app',
-    'https://floodwatch-web-lac.vercel.app',
-    'https://floodwatch-web-git-main-charuwan230s-projects.vercel.app',
-  ],
- 
-  credentials: true,
-}));
-app.use(express.json());
+// ─────────────────────────────────────────
+// Middleware
+// ─────────────────────────────────────────
+app.use(cors());
+app.use(express.json()); // 🔥 สำคัญมาก
 
-app.use('/api/auth',   authRoutes);
-app.use('/api/flood',  floodRoutes);
-app.use('/api/user',   userRoutes);
-app.use('/api/alerts', alertRoutes);
+// ─────────────────────────────────────────
+// MongoDB
+// ─────────────────────────────────────────
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err));
 
-app.get('/health', (_, res) => res.json({
-  status: 'ok',
-  time: new Date().toISOString(),
-  db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-}));
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ MongoDB connected');
-    fetchAndUpdateFloodData();
-  })
-  .catch(err => console.error('❌ MongoDB error:', err.message));
+// ─────────────────────────────────────────
+// LINE WEBHOOK (🔥 ตัวสำคัญสุด)
+// ─────────────────────────────────────────
+app.post('/webhook', async (req, res) => {
+  try {
+    const events = req.body.events;
 
-// ดึงข้อมูลน้ำทุก 5 นาที
-cron.schedule('*/5 * * * *', async () => {
-  console.log(`[CRON] ${new Date().toLocaleTimeString()} fetching...`);
-  await fetchAndUpdateFloodData();
-  await sendPendingAlerts();
+    if (!events) return res.sendStatus(200);
+
+    for (const event of events) {
+
+      // ── เมื่อ user พิมพ์ข้อความ ───────────────
+      if (event.type === 'message') {
+
+        const userId = event.source.userId;
+        console.log('📩 LINE USER ID:', userId);
+
+        // 🔥 บันทึก user ลง DB อัตโนมัติ
+        await User.findOneAndUpdate(
+          { lineUserId: userId },
+          { lineUserId: userId },
+          { upsert: true, new: true }
+        );
+
+        // 🔥 ตอบกลับ user
+        await fetch('https://api.line.me/v2/bot/message/reply', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            replyToken: event.replyToken,
+            messages: [
+              {
+                type: 'text',
+                text: `✅ เชื่อมต่อสำเร็จ!\nUser ID ของคุณถูกบันทึกแล้ว`,
+              }
+            ],
+          }),
+        });
+      }
+    }
+
+    res.sendStatus(200);
+
+  } catch (err) {
+    console.error('❌ Webhook Error:', err.message);
+    res.sendStatus(500);
+  }
 });
 
+
+// ─────────────────────────────────────────
+// TEST ROUTE (เช็ค server)
+// ─────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.send('🔥 FloodWatch API Running');
+});
+
+
+// ─────────────────────────────────────────
+// START SERVER
+// ─────────────────────────────────────────
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`🚀 FloodWatch Backend running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
