@@ -62,3 +62,9 @@ app.post('/webhook', async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
