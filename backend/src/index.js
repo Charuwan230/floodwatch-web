@@ -34,21 +34,11 @@ app.post('/webhook', async (req, res) => {
     if (!events) return res.sendStatus(200);
 
     for (const event of events) {
-
-      // ── เมื่อ user พิมพ์ข้อความ ───────────────
       if (event.type === 'message') {
-
         const userId = event.source.userId;
+
         console.log('📩 LINE USER ID:', userId);
 
-        // 🔥 บันทึก user ลง DB อัตโนมัติ
-        await User.findOneAndUpdate(
-          { lineUserId: userId },
-          { lineUserId: userId },
-          { upsert: true, new: true }
-        );
-
-        // 🔥 ตอบกลับ user
         await fetch('https://api.line.me/v2/bot/message/reply', {
           method: 'POST',
           headers: {
@@ -57,38 +47,18 @@ app.post('/webhook', async (req, res) => {
           },
           body: JSON.stringify({
             replyToken: event.replyToken,
-            messages: [
-              {
-                type: 'text',
-                text: `✅ เชื่อมต่อสำเร็จ!\nUser ID ของคุณถูกบันทึกแล้ว`,
-              }
-            ],
+            messages: [{
+              type: 'text',
+              text: `✅ เชื่อมต่อสำเร็จ!\nUser ID ของคุณ: ${userId}`,
+            }],
           }),
         });
       }
     }
 
     res.sendStatus(200);
-
   } catch (err) {
-    console.error('❌ Webhook Error:', err.message);
+    console.error(err);
     res.sendStatus(500);
   }
-});
-
-
-// ─────────────────────────────────────────
-// TEST ROUTE (เช็ค server)
-// ─────────────────────────────────────────
-app.get('/', (req, res) => {
-  res.send('🔥 FloodWatch API Running');
-});
-
-
-// ─────────────────────────────────────────
-// START SERVER
-// ─────────────────────────────────────────
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
 });
